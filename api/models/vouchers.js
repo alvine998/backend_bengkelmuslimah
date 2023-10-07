@@ -21,10 +21,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: 0
     },
-    total: {
-      type: DataTypes.STRING(100),
+    percentage: {
+      type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: "0"
+      defaultValue: 0
     },
     quota: {
       type: DataTypes.INTEGER,
@@ -51,6 +51,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TIME,
       allowNull: true
     },
+    banner: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
     created_on: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -58,8 +62,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     updated_on: {
       type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      allowNull: true
     },
     deleted: {
       type: DataTypes.TINYINT,

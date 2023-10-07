@@ -11,10 +11,11 @@ require('dotenv').config()
 exports.list = async (req, res) => {
     try {
         const size = req.query.size || 10;
+        const page = req.query.page || 0;
+        const offset = size * page;
         const result = await users.findAll({
             where: {
                 deleted: { [Op.eq]: 0 },
-                ...req.query.app_id && { app_id: { [Op.eq]: req.header('x-app-id') } },
                 ...req.query.search && {
                     [Op.or]: [
                         { name: { [Op.like]: `%${req.query.search}%` } },
@@ -27,12 +28,16 @@ exports.list = async (req, res) => {
             order: [
                 ['created_at', 'DESC'],
             ],
-            limit: size
+            ...req.query.pagination == 'true' && {
+                limit: size,
+                offset: offset
+            }
         })
         return res.status(200).send({
             status: "success",
-            total_items: result.length,
             items: result,
+            total_pages: Math.ceil(result.count / size),
+            current_page: page,
             code: 200
         })
     } catch (error) {
