@@ -45,22 +45,19 @@ exports.list = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+    const requiredParameters = ['phone', 'name', 'address', 'birth_place', 'birth_date', 'place_id', 'place_name'];
     try {
-        ['phone', 'name', 'address', 'birth_place', 'birth_date', "place_id", "place_name"]?.map(value => {
+        // Check if all required parameters are present in the request body
+        for (const value of requiredParameters) {
             if (!req.body[value]) {
-                res.status(400).send({
-                    status: "error",
-                    error_message: "Parameter tidak lengkap " + value,
-                    code: 400
-                })
-                return
+                return res.status(400).json({ error_message: `Parameter tidak lengkap: ${value}` });
             }
-        })
+        }
         const payload = {
             ...req.body,
         };
         const result = await employees.create(payload)
-        return res.status(200).send({ message: "Berhasil membuat data" })
+        return res.status(200).json({ message: "Berhasil membuat data" })
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Server mengalami gangguan!", error: error })
