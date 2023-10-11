@@ -1,10 +1,12 @@
 const dbConfig = require("../../config/db.config.js");
+const mysql2 = require("mysql2")
 
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
   operatorsAliases: false,
+  dialectModule: mysql2,
 
   pool: {
     max: dbConfig.pool.max,
@@ -26,5 +28,6 @@ db.admins = require("./admins.js")(sequelize, Sequelize);
 db.places = require("./places.js")(sequelize, Sequelize);
 db.transactions = require("./transactions.js")(sequelize, Sequelize);
 db.vouchers = require("./vouchers.js")(sequelize, Sequelize);
+db.employees = require("./employees.js")(sequelize, Sequelize);
 
 module.exports = db;
