@@ -23,6 +23,26 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: false
     },
+    purchase_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    purchase_name: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'purchases',
+        key: 'id'
+      }
+    },
+    employee_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    employee_name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
     image: {
       type: DataTypes.TEXT,
       allowNull: true
@@ -54,7 +74,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     created_on: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     updated_on: {
       type: DataTypes.DATE,
@@ -76,6 +97,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
+        ]
+      },
+      {
+        name: "purchase_name",
+        using: "BTREE",
+        fields: [
+          { name: "purchase_name" },
         ]
       },
     ]

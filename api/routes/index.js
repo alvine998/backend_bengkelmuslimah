@@ -4,9 +4,10 @@ module.exports = (app) => {
     const cUser = require('../controllers/user.js');
     const cVoucher = require('../controllers/voucher.js');
     const cAdmin = require('../controllers/admin.js');
-    const cBank = require('../controllers/bank.js');
+    const cPurchase = require('../controllers/purchase.js');
     const cPlace = require('../controllers/place.js');
-    // const prices = require('../controllers/price.js');
+    const cTransaction = require('../controllers/transaction.js');
+    const cEmployee = require('../controllers/employee.js');
 
     app.get('/users', middlewareHere, cUser.list);
     app.post('/user', middlewareHere, cUser.create);
@@ -25,10 +26,24 @@ module.exports = (app) => {
     app.patch('/voucher', middlewareHere, cVoucher.update);
     app.delete('/voucher', middlewareHere, cVoucher.delete);
 
-    app.get('/banks', middlewareHere, cBank.list);
-    app.post('/bank', middlewareHere, cBank.create);
-    app.patch('/bank', middlewareHere, cBank.update);
-    app.delete('/bank', middlewareHere, cBank.delete);
+    app.get('/purchases', middlewareHere, cPurchase.list);
+    app.post('/purchase', middlewareHere, cPurchase.create);
+    app.patch('/purchase', middlewareHere, cPurchase.update);
+    app.delete('/purchase', middlewareHere, cPurchase.delete);
 
+    app.get('/places', middlewareHere, cPlace.list);
+    app.post('/place', middlewareHere, cPlace.create);
+    app.patch('/place', middlewareHere, cPlace.update);
+    app.delete('/place', middlewareHere, cPlace.delete);
+
+    app.get('/employees', middlewareHere, cEmployee.list);
+    app.post('/employee', middlewareHere, cEmployee.create);
+    app.patch('/employee', middlewareHere, cEmployee.update);
+    app.delete('/employee', middlewareHere, cEmployee.delete);
+
+    app.get('/transactions', middlewareHere, cTransaction.list);
+    app.post('/transaction', middlewareHere, cTransaction.create);
+    app.patch('/transaction', middlewareHere, cTransaction.update);
+    app.delete('/transaction', middlewareHere, cTransaction.delete);
 
 }

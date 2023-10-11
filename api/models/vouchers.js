@@ -21,6 +21,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       defaultValue: 0
     },
+    min: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+      defaultValue: 0
+    },
     percentage: {
       type: DataTypes.INTEGER,
       allowNull: true,

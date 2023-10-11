@@ -26,7 +26,7 @@ exports.list = async (req, res) => {
                 }
             },
             order: [
-                ['created_at', 'DESC'],
+                ['created_on', 'DESC'],
             ],
             ...req.query.pagination == 'true' && {
                 limit: size,

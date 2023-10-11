@@ -11,7 +11,10 @@ require('dotenv').config()
 exports.list = async (req, res) => {
     try {
         const size = req.query.size || 10;
-        const result = await admins.findAll({
+        const page = req.query.page || 0;
+        const offset = size * page;
+
+        const result = await admins.findAndCountAll({
             where: {
                 deleted: { [Op.eq]: 0 },
                 ...req.query.search && {
@@ -28,18 +31,24 @@ exports.list = async (req, res) => {
                 ...req.query.status && { status: { [Op.eq]: req.query.status } },
             },
             order: [
-                ['created_at', 'DESC'],
+                ['created_on', 'DESC'],
             ],
-            limit: size
+            ...req.query.pagination == 'true' && {
+                limit: size,
+                offset: offset
+            }
         })
         return res.status(200).send({
             status: "success",
             total_items: result.length,
+            total_pages: Math.ceil(result.count / size),
             items: result,
             code: 200
         })
     } catch (error) {
-        return res.status(500).send({ message: "Server mengalami gangguan!", error: error })
+        console.log(error);
+        res.status(500).send({ message: "Server mengalami gangguan!", error: error })
+        return
     }
 };
 

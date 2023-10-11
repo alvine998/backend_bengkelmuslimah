@@ -1,8 +1,9 @@
 var DataTypes = require("sequelize").DataTypes;
 var _admins = require("./admins");
 var _assets = require("./assets");
-var _banks = require("./banks");
+var _employees = require("./employees");
 var _places = require("./places");
+var _purchases = require("./purchases");
 var _transactions = require("./transactions");
 var _users = require("./users");
 var _vouchers = require("./vouchers");
@@ -10,18 +11,22 @@ var _vouchers = require("./vouchers");
 function initModels(sequelize) {
   var admins = _admins(sequelize, DataTypes);
   var assets = _assets(sequelize, DataTypes);
-  var banks = _banks(sequelize, DataTypes);
+  var employees = _employees(sequelize, DataTypes);
   var places = _places(sequelize, DataTypes);
+  var purchases = _purchases(sequelize, DataTypes);
   var transactions = _transactions(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
   var vouchers = _vouchers(sequelize, DataTypes);
 
+  transactions.belongsTo(purchases, { as: "purchase_name_purchase", foreignKey: "purchase_name"});
+  purchases.hasMany(transactions, { as: "transactions", foreignKey: "purchase_name"});
 
   return {
     admins,
     assets,
-    banks,
+    employees,
     places,
+    purchases,
     transactions,
     users,
     vouchers,

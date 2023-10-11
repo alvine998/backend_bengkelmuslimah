@@ -13,7 +13,7 @@ exports.list = async (req, res) => {
         const size = req.query.size || 10;
         const page = req.query.page || 0;
         const offset = size * page;
-        const result = await users.findAll({
+        const result = await users.findAndCountAll({
             where: {
                 deleted: { [Op.eq]: 0 },
                 ...req.query.search && {
@@ -26,7 +26,7 @@ exports.list = async (req, res) => {
                 ...req.query.role && { role: { [Op.eq]: req.query.role } },
             },
             order: [
-                ['created_at', 'DESC'],
+                ['created_on', 'DESC'],
             ],
             ...req.query.pagination == 'true' && {
                 limit: size,
@@ -35,6 +35,7 @@ exports.list = async (req, res) => {
         })
         return res.status(200).send({
             status: "success",
+            total_items: result.length,
             items: result,
             total_pages: Math.ceil(result.count / size),
             current_page: page,
@@ -56,9 +57,21 @@ exports.create = async (req, res) => {
         if (existUsers) {
             return res.status(404).send({ message: "Email telah terdaftar!" })
         }
+        function makeid(length) {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            const charactersLength = characters.length;
+            let counter = 0;
+            while (counter < length) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                counter += 1;
+            }
+            return result;
+        }
         const payload = {
             ...req.body,
-            password: bcrypt.hashSync(req.body.password, 8)
+            password: bcrypt.hashSync(req.body.password, 8),
+            ref_code: makeid(6)
         };
         const result = await users.create(payload)
         return res.status(200).send({

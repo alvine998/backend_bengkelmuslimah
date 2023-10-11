@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('places', {
+  return sequelize.define('employees', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -11,33 +11,42 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(100),
       allowNull: false
     },
+    place_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    place_name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    birth_place: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    birth_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: false
+    },
     address: {
       type: DataTypes.STRING(100),
       allowNull: false
     },
-    province: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    cities: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    long: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    lat: {
-      type: DataTypes.STRING(100),
+    phone: {
+      type: DataTypes.STRING(13),
       allowNull: false
     },
     photo: {
-      type: DataTypes.JSON,
-      allowNull: false
+      type: DataTypes.TEXT,
+      allowNull: true
     },
-    price: {
-      type: DataTypes.DOUBLE,
-      allowNull: false
+    email: {
+      type: DataTypes.STRING(100),
+      allowNull: true
+    },
+    status: {
+      type: DataTypes.ENUM('available','busy','off','out'),
+      allowNull: false,
+      defaultValue: "available"
     },
     created_on: {
       type: DataTypes.DATE,
@@ -55,7 +64,8 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'places',
+    tableName: 'employees',
+    hasTrigger: true,
     timestamps: false,
     indexes: [
       {

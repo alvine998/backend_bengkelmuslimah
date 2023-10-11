@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('banks', {
+  return sequelize.define('purchases', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -9,15 +9,24 @@ module.exports = function(sequelize, DataTypes) {
     },
     account_name: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: true
     },
     account_number: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: true
     },
     name: {
       type: DataTypes.STRING(100),
       allowNull: false
+    },
+    type: {
+      type: DataTypes.ENUM('bank','qris','dana'),
+      allowNull: false,
+      defaultValue: "bank"
+    },
+    image: {
+      type: DataTypes.TEXT,
+      allowNull: true
     },
     created_on: {
       type: DataTypes.DATE,
@@ -35,7 +44,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'banks',
+    tableName: 'purchases',
     timestamps: false,
     indexes: [
       {

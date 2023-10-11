@@ -1,6 +1,6 @@
 
 const db = require('../models')
-const vouchers = db.vouchers
+const purchases = db.purchases
 const Op = db.Sequelize.Op
 require('dotenv').config()
 
@@ -11,16 +11,16 @@ exports.list = async (req, res) => {
         const page = req.query.page || 0;
         const offset = size * page;
 
-        const result = await vouchers.findAndCountAll({
+        const result = await purchases.findAndCountAll({
             where: {
                 deleted: { [Op.eq]: 0 },
-                ...req.query.type && { type: { [Op.in]: req.query.type.split() } },
                 ...req.query.search && {
                     [Op.or]: [
-                        { name: { [Op.like]: `%${req.query.search}%` } },
-                        { code: { [Op.like]: `%${req.query.search}%` } },
+                        { account_name: { [Op.like]: `%${req.query.search}%` } },
+                        { account_number: { [Op.like]: `%${req.query.search}%` } },
                     ]
                 },
+                ...req.query.type && { type: { [Op.in]: req.query.type.split(",") } },
                 ...req.query.id && { id: { [Op.eq]: req.query.id } }
             },
             order: [
@@ -45,24 +45,21 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        ['name', 'type', 'quota', 'code']?.map(value => {
+        ['account_number', 'name']?.map(value => {
             if (!req.body[value]) {
-                return res.status(400).send({
+                res.status(400).send({
                     status: "error",
                     error_message: "Parameter tidak lengkap " + value,
                     code: 400
                 })
+                return
             }
         })
         const payload = {
             ...req.body,
         };
-        const result = await vouchers.create(payload)
-        return res.status(200).send({
-            status: "success",
-            message: "Berhasil membuat data",
-            code: 200
-        })
+        const result = await purchases.create(payload)
+        return res.status(200).send({ message: "Berhasil membuat data" })
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Server mengalami gangguan!", error: error })
@@ -72,7 +69,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const result = await vouchers.findOne({
+        const result = await purchases.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
@@ -84,7 +81,7 @@ exports.update = async (req, res) => {
         const payload = {
             ...req.body,
         }
-        const onUpdate = await vouchers.update(payload, {
+        const onUpdate = await purchases.update(payload, {
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
@@ -99,7 +96,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        const result = await vouchers.findOne({
+        const result = await purchases.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.query.id }

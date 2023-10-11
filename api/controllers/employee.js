@@ -1,6 +1,6 @@
 
 const db = require('../models')
-const banks = db.banks
+const employees = db.employees
 const Op = db.Sequelize.Op
 require('dotenv').config()
 
@@ -11,15 +11,18 @@ exports.list = async (req, res) => {
         const page = req.query.page || 0;
         const offset = size * page;
 
-        const result = await banks.findAndCountAll({
+        const result = await employees.findAndCountAll({
             where: {
                 deleted: { [Op.eq]: 0 },
                 ...req.query.search && {
                     [Op.or]: [
-                        { account_name: { [Op.like]: `%${req.query.search}%` } },
-                        { account_number: { [Op.like]: `%${req.query.search}%` } },
+                        { name: { [Op.like]: `%${req.query.search}%` } },
+                        { email: { [Op.like]: `%${req.query.search}%` } },
+                        { phone: { [Op.like]: `%${req.query.search}%` } },
                     ]
                 },
+                ...req.query.status && { status: { [Op.in]: req.query.status.split(",") } },
+                ...req.query.id && { id: { [Op.eq]: req.query.id } }
             },
             order: [
                 ['created_on', 'DESC'],
@@ -43,24 +46,21 @@ exports.list = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        ['account_name', 'account_number', 'name']?.map(value => {
+        ['phone', 'name', 'address', 'birth_place', 'birth_date', "place_id", "place_name"]?.map(value => {
             if (!req.body[value]) {
-                return res.status(400).send({
+                res.status(400).send({
                     status: "error",
                     error_message: "Parameter tidak lengkap " + value,
                     code: 400
                 })
+                return
             }
         })
         const payload = {
             ...req.body,
         };
-        const result = await banks.create(payload)
-        return res.status(200).send({
-            status: "success",
-            items: result,
-            code: 200
-        })
+        const result = await employees.create(payload)
+        return res.status(200).send({ message: "Berhasil membuat data" })
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: "Server mengalami gangguan!", error: error })
@@ -70,7 +70,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const result = await banks.findOne({
+        const result = await employees.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
@@ -82,13 +82,13 @@ exports.update = async (req, res) => {
         const payload = {
             ...req.body,
         }
-        const onUpdate = await banks.update(payload, {
+        const onUpdate = await employees.update(payload, {
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.body.id }
             }
         })
-        res.status(200).send({ message: "Berhasil ubah data", update: onUpdate })
+        res.status(200).send({ message: "Berhasil ubah data" })
         return
     } catch (error) {
         return res.status(500).send({ message: "Gagal mendapatkan data admin", error: error })
@@ -97,7 +97,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        const result = await banks.findOne({
+        const result = await employees.findOne({
             where: {
                 deleted: { [Op.eq]: 0 },
                 id: { [Op.eq]: req.query.id }
