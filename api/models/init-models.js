@@ -18,8 +18,6 @@ function initModels(sequelize) {
   var users = _users(sequelize, DataTypes);
   var vouchers = _vouchers(sequelize, DataTypes);
 
-  transactions.belongsTo(purchases, { as: "purchase_name_purchase", foreignKey: "purchase_name"});
-  purchases.hasMany(transactions, { as: "transactions", foreignKey: "purchase_name"});
 
   return {
     admins,

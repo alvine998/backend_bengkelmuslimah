@@ -27,13 +27,13 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    purchase_name: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'purchases',
-        key: 'id'
-      }
+    purchase_account_number: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    purchase_type: {
+      type: DataTypes.STRING(100),
+      allowNull: false
     },
     employee_id: {
       type: DataTypes.INTEGER,
@@ -55,6 +55,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: false
     },
+    code: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
     voucher_id: {
       type: DataTypes.INTEGER,
       allowNull: true
@@ -67,8 +71,18 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DOUBLE,
       allowNull: false
     },
+    service_type: {
+      type: DataTypes.ENUM('home_service','onsite'),
+      allowNull: false,
+      defaultValue: "onsite"
+    },
+    home_address: {
+      type: DataTypes.BLOB,
+      allowNull: true,
+      comment: "jika servis kerumah"
+    },
     status: {
-      type: DataTypes.ENUM('pending','paid','unpaid'),
+      type: DataTypes.ENUM('canceled','paid','unpaid'),
       allowNull: false,
       defaultValue: "unpaid"
     },
@@ -97,13 +111,6 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "id" },
-        ]
-      },
-      {
-        name: "purchase_name",
-        using: "BTREE",
-        fields: [
-          { name: "purchase_name" },
         ]
       },
     ]
